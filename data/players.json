@@ -1,0 +1,9 @@
+{
+  "adrian": {
+    "name": "Adrian",
+    "totalRounds": 4,
+    "avgWpm": 2,
+    "avgAccuracy": 0.65,
+    "bestWpm": 6
+  }
+}
