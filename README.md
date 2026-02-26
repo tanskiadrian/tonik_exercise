@@ -3,6 +3,8 @@
 npm install
 npm run dev
 
+## How to test multiplayer option?
+Just open two incognito browsers :)
 
 App runs on `http://localhost:3000`.
 
