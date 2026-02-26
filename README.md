@@ -1,36 +1,29 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+## How to run
 
-## Getting Started
-
-First, run the development server:
-
-```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+App runs on `http://localhost:3000`.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Architecture decisions
 
-## Learn More
+### Why Socket.io over raw WebSockets?
 
-To learn more about Next.js, take a look at the following resources:
+Tried to keep it simple. Socket.io gives me reconnection, rooms and event-based messaging out of the box. With raw WS I'd spend half the time writing retry logic and message parsing. For a typing game where every keystroke matters, reliable connection is key.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Why custom server instead of Next.js API routes?
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Next.js API routes are serverless/request-response by nature - they don't support persistent WebSocket connections. So I went with a custom Node HTTP server that runs Next.js and Socket.io on the same port. One process, no CORS headaches, simple deploy.
 
-## Deploy on Vercel
+### Why JSON file for persistence?
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+It's a recruitment exercise, not a production app. SQLite or Postgres would be overkill here. JSON file does the job 
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Why no separate REST API for game state?
+
+Everything goes through WebSocket. Adding REST endpoints would mean two sources of truth. Socket.io already handles the initial state sync on connection
+
+### Project structure
+
+Nothing fancy. server/ has the backend, app/ has Next.js pages, components/ and hooks/ have the frontend stuff, lib/ has shared code between client and server. Tried to keep it flat - no nested folders for the sake of nesting.
